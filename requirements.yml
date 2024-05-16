@@ -1,0 +1,15 @@
+---
+
+roles:
+  - src: https://github.com/buissetemmanuel/ansible-role-package.git
+    version: v1.0.0
+    name: package
+  - src: https://github.com/buissetemmanuel/ansible-role-user.git
+    version: v1.0.0
+    name: user
+  - src: https://github.com/buissetemmanuel/ansible-role-crc.git
+    version: init
+    name: crc
+  - src: https://github.com/buissetemmanuel/ansible-role-container.git
+    version: v1.0.8
+    name: container

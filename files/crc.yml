@@ -1,0 +1,85 @@
+http:
+  routers:
+    crc-console:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-console
+#      middlewares:
+#        - crc-redirectregex
+      rule: Host(`console-openshift-console.apps-crc.testing`)
+    crc-canary:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-canary
+#      middlewares:
+#        - crc-redirectregex
+      rule: Host(`canary-openshift-ingress-canary.apps-crc.testing`)
+    crc-default-route:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-default-route
+#      middlewares:
+#        - crc-redirectregex
+      rule: Host(`default-route-openshift-image-registry.apps-crc.testing`)
+    crc-downloads:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-downloads
+#      middlewares:
+#        - crc-redirectregex
+      rule: Host(`downloads-openshift-console.apps-crc.testing`)
+    crc-oauth:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-oauth
+#      middlewares:
+#        - crc-redirectregex
+      rule: Host(`oauth-openshift.apps-crc.testing`)
+    crc-api:
+      entrypoints:
+        - crc-api
+      tls: {}
+      service: crc-api
+#      middlewares:
+#        - crc-redirectregex
+      rule: Host(`api.crc.testing`)
+
+#  middlewares:
+#    redirect-to-https:
+#      redirectscheme:
+#        scheme: https
+#    crc-redirectregex:
+#      redirectRegex:
+#        regex: "^http://(.*)/(.*)"
+#        replacement: "http://${1}/${2}"
+
+  services:
+    crc-console:
+      loadBalancer:
+        servers:
+          - url: "https://console-openshift-console.apps-crc.testing"
+    crc-canary:
+      loadBalancer:
+        servers:
+          - url: "https://canary-openshift-ingress-canary.apps-crc.testing"
+    crc-default-route:
+      loadBalancer:
+        servers:
+          - url: "https://default-route-openshift-image-registry.apps-crc.testing"
+    crc-downloads:
+      loadBalancer:
+        servers:
+          - url: "https://downloads-openshift-console.apps-crc.testing"
+    crc-oauth:
+      loadBalancer:
+        servers:
+          - url: "https://oauth-openshift.apps-crc.testing"
+    crc-api:
+      loadBalancer:
+        servers:
+          - url: "https://api.crc.testing:6443"
