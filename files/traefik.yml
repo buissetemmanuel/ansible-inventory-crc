@@ -1,0 +1,27 @@
+log:
+  level: DEBUG
+  filePath: /var/log/traefik/traefik.log
+  format: json
+
+accessLog:
+  filePath: /var/log/traefik/access.log
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  crc-api:
+    address: ":6443"
+
+serversTransport:
+  insecureSkipVerify: true
+
+api:
+  insecure: true
+  dashboard: true
+
+providers:
+  file:
+    directory: "/etc/traefik/config"
+    watch: true

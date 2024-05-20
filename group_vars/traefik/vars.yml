@@ -1,0 +1,79 @@
+---
+
+container_state: "{{ crc_state }}"
+
+container_user_owner: traefikuo
+container_user_group: traefikug
+container_user_group_logs: traefikugl
+container_user_owner_service: traefikuos
+container_user_group_service: traefikugs
+
+container_pod_name: traefik_pod
+
+container_pod_containers:
+  - name: traefik
+    image_name: docker.io/traefik
+    image_tag: 2.11.0
+    image_pull_policy: IfNotPresent
+    description: "Traefik"
+    env:
+      TZ: Europe/Zurich
+    ports:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+      - containerPort: 8080
+        hostPort: 8080
+        protocol: TCP
+      - containerPort: 6443
+        hostPort: 6443
+        protocol: TCP
+    resources:
+      limits:
+        cpu: "1"
+      requests:
+        cpu: "0.5"
+    volumeMounts:
+      - mountPath: /etc/traefik/traefik.yml:ro,z
+        name: traefik-config-file
+      - mountPath: /etc/traefik/config:ro,z
+        name: traefik-config-dynamic-dir
+      - mountPath: /var/log/traefik:rw,z
+        name: traefik-logs-dir
+
+traefik_pod_config_file: "{{ container_pod_etc_dir }}/traefik.yml"
+traefik_pod_config_dynamic_dir: "{{ container_pod_etc_dir }}/config"
+traefik_pod_logs_dir: "{{ container_pod_logs_dir }}"
+
+container_directories:
+  - path: "{{ traefik_pod_config_dynamic_dir }}"
+    owner: "{{ container_user_owner_service }}"
+    group: "{{ container_user_group_service }}"
+
+container_files:
+  - src: traefik.yml
+    dest: "{{ traefik_pod_config_file }}"
+    owner: "{{ container_user_owner_service }}"
+    group: "{{ container_user_group_service }}"
+  - src: api.yml
+    dest: "{{ traefik_pod_config_dynamic_dir }}/api.yml"
+    owner: "{{ container_user_owner_service }}"
+    group: "{{ container_user_group_service }}"
+  - src: crc.yml
+    dest: "{{ traefik_pod_config_dynamic_dir }}/crc.yml"
+    owner: "{{ container_user_owner_service }}"
+    group: "{{ container_user_group_service }}"
+
+container_pod_volumes:
+  - name: traefik-config-file
+    hostPath:
+      path: "{{ traefik_pod_config_file }}"
+  - name: traefik-config-dynamic-dir
+    hostPath:
+      path: "{{ traefik_pod_config_dynamic_dir }}"
+  - name: traefik-logs-dir
+    hostPath:
+      path: "{{ traefik_pod_logs_dir }}"

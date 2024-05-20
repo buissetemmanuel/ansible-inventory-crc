@@ -1,0 +1,79 @@
+---
+
+- name: Manage Code Ready Container server
+  hosts: crc
+  vars:
+    crc_state: absent
+  tasks:
+    - name: Include buissetemmanuel.container for traefik installation
+      ansible.builtin.include_role:
+        name: container
+
+    - name: Include buissetemmanuel/ansible-role-crc
+      ansible.builtin.include_role:
+        name: crc
+
+    - name: Include buissetemmanuel/ansible-role-user
+      ansible.builtin.include_role:
+        name: user
+
+    - name: "Delete line hosts file"
+      become: true
+      lineinfile:
+        dest: /etc/hosts
+        regexp: '.*{{ item }}$'
+        line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ item }} {{ item }}.{{ ansible_domain }}"
+        state: absent
+      when: hostvars[item].ansible_default_ipv4.address is defined
+      loop: "{{ groups['all'] }}"
+
+    - name: Include buissetemmanuel/ansible-role-package
+      ansible.builtin.include_role:
+        name: package
+
+### TRY TO FIND BEST SOLUTION TO CLEAN FOLLOW ONLY IF NOT USED ANYMORE BY OTHER ON SAME SERVER
+#    - name: "Set net.ipv4.ip_unprivileged_port_start=80"
+#      become: true
+#      ansible.posix.sysctl:
+#        name: net.ipv4.ip_unprivileged_port_start
+#        value: '80'
+#        sysctl_set: true
+#
+#    - name: Iptables for HTTP
+#      become: true
+#      ansible.builtin.lineinfile:
+#        path: /etc/sysconfig/iptables
+#        insertafter: '.* --dport 22 -j ACCEPT'
+#        line: "-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT"
+#        state: present
+#
+#    - name: Iptables for HTTPS
+#      become: true
+#      ansible.builtin.lineinfile:
+#        path: /etc/sysconfig/iptables
+#        insertafter: '.* --dport 80 -j ACCEPT'
+#        line: "-A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT"
+#        state: present
+#
+#    - name: Iptables for CRC(6443)
+#      become: true
+#      ansible.builtin.lineinfile:
+#        path: /etc/sysconfig/iptables
+#        insertafter: '.* --dport 443 -j ACCEPT'
+#        line: "-A INPUT -p tcp -m state --state NEW -m tcp --dport 6443 -j ACCEPT"
+#        state: present
+#
+#    - name: Restart iptables
+#      become: true
+#      ansible.builtin.systemd:
+#        name: iptables
+#        state: restarted
+#
+#    - name: Passwordless sudo
+#      become: true
+#      ansible.builtin.lineinfile:
+#        path: /etc/sudoers
+#        state: present
+#        regexp: '^%wheel'
+#        line: '%wheel	ALL=(ALL)	NOPASSWD: ALL'
+#        validate: 'visudo -cf %s'

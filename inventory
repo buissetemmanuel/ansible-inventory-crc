@@ -1,0 +1,13 @@
+server03  ansible_host=server03.local.ch
+
+[all:vars]
+ansible_user="admin"
+
+[ping]
+server03
+
+[crc]
+server03
+
+[traefik]
+server03

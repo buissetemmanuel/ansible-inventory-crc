@@ -1,0 +1,64 @@
+http:
+  routers:
+    crc-console:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-console
+      rule: Host(`console-openshift-console.apps-crc.testing`)
+    crc-canary:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-canary
+      rule: Host(`canary-openshift-ingress-canary.apps-crc.testing`)
+    crc-default-route:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-default-route
+      rule: Host(`default-route-openshift-image-registry.apps-crc.testing`)
+    crc-downloads:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-downloads
+      rule: Host(`downloads-openshift-console.apps-crc.testing`)
+    crc-oauth:
+      entrypoints:
+        - websecure
+      tls: {}
+      service: crc-oauth
+      rule: Host(`oauth-openshift.apps-crc.testing`)
+    crc-api:
+      entrypoints:
+        - crc-api
+      tls: {}
+      service: crc-api
+      rule: Host(`api.crc.testing`)
+
+  services:
+    crc-console:
+      loadBalancer:
+        servers:
+          - url: "https://console-openshift-console.apps-crc.testing"
+    crc-canary:
+      loadBalancer:
+        servers:
+          - url: "https://canary-openshift-ingress-canary.apps-crc.testing"
+    crc-default-route:
+      loadBalancer:
+        servers:
+          - url: "https://default-route-openshift-image-registry.apps-crc.testing"
+    crc-downloads:
+      loadBalancer:
+        servers:
+          - url: "https://downloads-openshift-console.apps-crc.testing"
+    crc-oauth:
+      loadBalancer:
+        servers:
+          - url: "https://oauth-openshift.apps-crc.testing"
+    crc-api:
+      loadBalancer:
+        servers:
+          - url: "https://api.crc.testing:6443"
