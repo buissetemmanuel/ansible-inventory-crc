@@ -1,5 +1,5 @@
 http:
   routers:
     dashboard:
-      rule: Host(`server03.local.ch`) && (Path(`/api`) || Path(`/dashboard`))
+      rule: Host(`server03.local.ch`)
       service: api@internal
